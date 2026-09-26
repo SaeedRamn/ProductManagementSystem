@@ -1,0 +1,97 @@
+﻿@model ProductManagementSystem.Models.Product
+@{
+    ViewData["Title"] = "Product Details";
+    var images = Model.ProductImages != null && Model.ProductImages.Any()
+        ? Model.ProductImages.ToList()
+        : null;
+    var mainImage = images != null ? images.First().Path : "/images/no-image.png";
+}
+
+<div class="container py-5">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Product" asp-action="Index" class="text-decoration-none">Products</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+
+        <!-- Gallery -->
+        <div class="col-lg-6">
+            <div class="border rounded-3 bg-light mb-3 d-flex align-items-center justify-content-center" style="height:420px; overflow:hidden;">
+                <img id="mainImage" src="@mainImage" alt="@Model.Name"
+                     class="w-100 h-100" style="object-fit:cover;" />
+            </div>
+
+            @if (images != null && images.Count > 1)
+            {
+                <div class="d-flex gap-2 flex-wrap">
+                    @foreach (var img in images)
+                    {
+                        <img src="@img.Path" alt="thumbnail"
+                             class="thumb-img rounded border"
+                             style="width:70px; height:70px; object-fit:cover; cursor:pointer;"
+                             onclick="document.getElementById('mainImage').src = this.src;" />
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Info -->
+        <div class="col-lg-6">
+            <span class="badge bg-primary-subtle text-primary mb-2">
+                <i class="fa-solid fa-tag me-1"></i>@(Model.Category?.Name ?? "Uncategorized")
+            </span>
+
+            <h1 class="fw-bold mb-3">@Model.Name</h1>
+
+            <h3 class="text-success fw-semibold mb-4">
+                @Model.Price.ToString("C")
+            </h3>
+
+            <table class="table table-borderless w-auto">
+                <tbody>
+                    <tr>
+                        <td class="text-muted pe-4">Product ID</td>
+                        <td class="fw-semibold">#@Model.Id</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted pe-4">Category</td>
+                        <td class="fw-semibold">@(Model.Category?.Name ?? "—")</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted pe-4">Images</td>
+                        <td class="fw-semibold">@(images?.Count ?? 0) photo(s)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr class="my-4" />
+
+            <div class="d-flex gap-2">
+                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fa-solid fa-arrow-left me-1"></i>Back to List
+                </a>
+                <a asp-controller="Product" asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning">
+                    <i class="fa-solid fa-pen-to-square me-1"></i>Edit
+                </a>
+                <a asp-controller="Product" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                    <i class="fa-solid fa-trash me-1"></i>Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .thumb-img {
+        transition: opacity 0.2s ease, transform 0.15s ease;
+    }
+
+        .thumb-img:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+</style>
